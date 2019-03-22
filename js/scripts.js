@@ -27,11 +27,14 @@ Contact.prototype.fullName= function(){
     $("#new-contact")[0].reset();
 }
 
+  function removeOnes(){
+    $(".new-ones").hide();
+  }
 $(document).ready(function(){
 
   $("#add-address").click(function(){
     $("#new-addresses").append(
-        '<div class="new-address">'+
+        '<div class="new-ones new-address">'+
           '<div class="form-group">'+
           '<label for="new-street">Street</label>'+
           '<input type="text" class="form-control new-street">'+
@@ -89,6 +92,7 @@ $(document).ready(function(){
 
 
       reset();
+      removeOnes();
 
 
 

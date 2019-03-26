@@ -1,105 +1,119 @@
-function AddressBook (){
-  this.contacts = [];
+function PigDice(){
+  this.players = [player1,player2];
 }
 
-AddressBook.prototype.addContact = function(contact){
-  this.contacts.push(contact);
+PigDice.prototype.addPlayer= function(player){
+  this.players.push(player);
 }
 
-function Contact (first, last, phone){
-  this.firstName = first;
-  this.lastName = last;
-  this.phoneNumber = phone;
-  this.addresses = [];
+var rollsCounter=0
+
+Player.prototype.rollDice =function(){
+  var diceValue= Math.floor(Math.random() * 6)+1;
+  rollsCounter++;
+  return this.diceValue;
+
 }
 
-function Address (street, city, state){
-  this.street = street;
-  this.city = city;
-  this.state = state;
+function switchPlayer(){
+  if(index === 0){
+    index =1;
+  }
+  else{
+    index=0;
+  }
 }
 
-Address.prototype.fullAddress = function(){
-  return this.street+", "+ this.city + ", " + this.state;
+function Player(){
+  // this.playerName = name;
+  this.rollsCounter = 0;
+  this.current= 0;
+  this.score= 0;
+
 }
-Contact.prototype.fullName= function(){
-  return this.firstName + " " +this.lastName;
+
+
+Player.prototype.countCurrent= function(diceValue){
+  this.current += diceValue;
+  return  this.current;
 }
+
+Player.prototype.countScore= function(){
+  return this.score += this.current;
+}
+
 
   function reset(){
-    $("#new-contact")[0].reset();
+    $("#new-game")[0].reset();
 }
 
-  function removeOnes(){
-    $(".new-ones").hide();
-  }
+
+
+
+
 $(document).ready(function(){
+  var index = 0;
+  // var newPigDice = new  PigDice();
 
-  $("#add-address").click(function(){
-    $("#new-addresses").append(
-        '<div class="new-ones new-address">'+
-          '<div class="form-group">'+
-          '<label for="new-street">Street</label>'+
-          '<input type="text" class="form-control new-street">'+
-        '</div>'+
-        '<div class="form-group">'+
-          '<label for="new-city">City</label>'+
-          '<input type="text" class="form-control new-city">'+
-        '</div>'+
-        '<div class="form-group">'+
-          '<label for="new-state">State</label>'+
-          '<input type="text" class="form-control new-state">'+
-        '</div>'+
-      '</div>');
-  });
+  var player1 = new Player();
+  var player2 = new Player();
 
-  var newAddressBook = new AddressBook();
+  function textResult(){
+    $(".current1").text(player1.current);
+    $(".current2").text(player2.current);
+    $(".score1").text(player1.score);
+    $(".score2").text(player2.score);
 
-  $("#new-contact").submit(function(event){
+  }
+
+  $("#new-game").submit(function(event){
     event.preventDefault();
 
-    var fName = $("#new-first-name").val();
-    var lName = $("#new-last-name").val();
-    var phone = $("#phone").val();
+    reset();
+  });
 
-    var newContact = new Contact (fName, lName, phone);
+  $("#roll").click(function(){
+    var diceValue = rollDice();
 
-    $(".new-address").each(function(){
-      var inputtedStreet = $(this).find("input.new-street").val();
-      var inputtedCity = $(this).find("input.new-city").val();
-      var inputtedState = $(this).find("input.new-state").val();
-
-      console.log(inputtedStreet+", "+inputtedCity+", "+inputtedState);
-      var newAddress = new Address(inputtedStreet,inputtedCity,inputtedState);
-      newContact.addresses.push(newAddress);
-    });
-    newAddressBook.addContact(newContact);
-    console.log(newAddressBook);
-
-    $("ul#contacts").append("<li><span class='contact'>"
-                            +newContact.fullName()
-                            +"</span></li>"+"<br>");
-
-      $(".contact").last().click(function() {
-        $("#show-contact").show();
-        $("#show-contact h2").text(newContact.fullName());
-        $(".first-name").text(newContact.firstName);
-        $(".last-name").text(newContact.lastName);
-        $("ul#addresses").text("");
-
-        newContact.addresses.forEach(function(address) {
-          $("ul#addresses").append("<li>" + address.fullAddress() + "</li>");
-        });
-
-      });
-
-
-      reset();
-      removeOnes(); //to hide the new html added for the additional addresses
-
+    $(".dice-value").text(diceValue);
+    if (index===0){
+      if(diceValue === 1){
+        player1.current=0;
+        player1.score=0;
+        textResult();
+        switchPlayer();
+      }
+      else{
+        player1.countCurrent(diceValue);
+        player1.countScore();
+        textResult();
+      }
+    }
+    else{
+      if(diceValue === 1){
+        player2.current=0;
+        player2.score=0;
+        switchPlayer();
+        textResult();
+      }
+      else{
+        player2.countCurrent(diceValue);
+        player2.countScore();
+        textResult();
+      }
+    }
 
 
   });
+
+  $("#hold").click(function(){
+    switchPlayer();
+  });
+
+
+
+
+
 
 
 });
